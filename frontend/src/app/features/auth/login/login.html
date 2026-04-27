@@ -1,0 +1,32 @@
+<div class="h-full flex justify-center items-center">
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()" class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+    <legend class="fieldset-legend">Login</legend>
+
+    <label class="label">Usuario</label>
+    <input [(ngModel)]="username" type="text" class="input" placeholder="Usuario" name="username" />
+
+    <label class="label">Password</label>
+    <input
+      [(ngModel)]="password"
+      type="password"
+      class="input"
+      placeholder="contraseña"
+      name="password"
+    />
+
+    @if(error()){
+    <div class="alert alert-error mt-4">
+      {{ error() }}
+    </div>
+    }
+
+    <button type="submit" [disabled]="loading()" class="btn btn-neutral mt-4">
+      @if (loading()) {
+        <span class="loading loading-spinner"></span>
+        cargando...
+      } @else {
+        Login
+      }
+    </button>
+  </form>
+</div>
