@@ -27,7 +27,7 @@ export class LoginComponent {
       next: (response: Partial<LoginData>) => {
         if (response.access_token) {
           this.authService.saveToken(response.access_token);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/grupos']);
           return true;
         }
         this.error.set('Credenciales incorrectas');

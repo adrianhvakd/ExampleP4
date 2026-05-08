@@ -2,11 +2,11 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const getConfigDB = (): TypeOrmModuleOptions => ({
   type: (process.env.DATABASE_TYPE as 'mysql') || 'mysql',
-  host: process.env.DATABASE_HOST || '192.168.2.100',
+  host: process.env.DATABASE_HOST || 'localhost',
   port: parseInt(process.env.DATABASE_PORT || '3306', 10),
   username: process.env.DATABASE_USER || 'root',
   password: process.env.DATABASE_PASSWORD || '',
-  database: process.env.DATABASE_NAME || 'example_db',
+  database: process.env.DATABASE_NAME || 'recuperatorio_db',
   entities: [__dirname + '/../**/*.entity{.ts,.js}'],
   synchronize: true,
 });

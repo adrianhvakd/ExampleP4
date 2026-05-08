@@ -29,4 +29,8 @@ export class AuthService {
       type: 'bearer',
     };
   }
+
+  async getProfile(userId: number) {
+    return await this.usersService.findOne(userId);
+  }
 }

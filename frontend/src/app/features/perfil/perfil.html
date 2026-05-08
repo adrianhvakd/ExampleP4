@@ -1,0 +1,60 @@
+<div class="p-6 max-w-lg mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Mi Perfil</h1>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else if (user(); as u) {
+    <div class="fieldset bg-base-200 border-base-300 rounded-box border p-6">
+      @if (error()) {
+        <div class="alert alert-error mb-4">{{ error() }}</div>
+      }
+
+      <div class="flex flex-col items-center mb-6">
+        <div class="w-20 h-20 rounded-full bg-neutral text-neutral-content flex items-center justify-center text-3xl font-bold mb-2">
+          {{ u.nombre!.charAt(0)!.toUpperCase() }}
+        </div>
+        <h2 class="text-xl font-bold">{{ u.nombre }}</h2>
+        <span class="text-sm opacity-60">@{{ u.username }}</span>
+      </div>
+
+      @if (!editing()) {
+        <div class="space-y-3">
+          <div>
+            <label class="label text-xs">Email</label>
+            <p>{{ u.email ?? 'No registrado' }}</p>
+          </div>
+          <div>
+            <label class="label text-xs">Teléfono</label>
+            <p>{{ u.telefono ?? 'No registrado' }}</p>
+          </div>
+          <div>
+            <label class="label text-xs">Miembro desde</label>
+            <p>{{ u.createdAt | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <button (click)="toggleEdit()" class="btn btn-neutral w-full mt-4">Editar Perfil</button>
+        </div>
+      } @else {
+        <div>
+          <label class="label">Nombre</label>
+          <input [(ngModel)]="editNombre" type="text" class="input w-full" name="nombre" />
+
+          <label class="label mt-3">Email</label>
+          <input [(ngModel)]="editEmail" type="email" class="input w-full" placeholder="correo@ejemplo.com" name="email" />
+
+          <label class="label mt-3">Teléfono</label>
+          <input [(ngModel)]="editTelefono" type="text" class="input w-full" placeholder="+591 70000000" name="telefono" />
+
+          <div class="flex gap-3 mt-6">
+            <button (click)="save()" [disabled]="saving()" class="btn btn-neutral flex-1">
+              @if (saving()) { <span class="loading loading-spinner"></span> }
+              Guardar
+            </button>
+            <button (click)="toggleEdit()" class="btn btn-ghost">Cancelar</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

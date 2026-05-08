@@ -1,0 +1,51 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Usuarios</h1>
+    <a routerLink="/usuarios/nuevo" class="btn btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Nuevo Usuario
+    </a>
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error mb-4">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else if (usuarios().length === 0) {
+    <div class="alert alert-info">No hay usuarios registrados. ¡Crea tu primer usuario!</div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of usuarios(); track u.id) {
+            <tr>
+              <td class="font-semibold">{{ u.nombre }}</td>
+              <td>@{{ u.username }}</td>
+              <td>{{ u.email ?? '-' }}</td>
+              <td>{{ u.telefono ?? '-' }}</td>
+              <td>
+                <button (click)="eliminar(u.id!)" [disabled]="deleting() === u.id" class="btn btn-error btn-sm">
+                  {{ deleting() === u.id ? '...' : 'Eliminar' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-2 text-sm opacity-60">Total: {{ usuarios().length }} usuarios</div>
+  }
+</div>

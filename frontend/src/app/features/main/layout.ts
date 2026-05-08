@@ -10,20 +10,20 @@ import { RouterOutlet, RouterLink } from "@angular/router";
 export class LayoutComponent {
     menuNav = [
         {
-            name: 'Dashboard',
-            route: 'dashboard',
-            icon: 'dashboard'
+            name: 'Grupos',
+            route: 'grupos',
+            icon: 'groups'
         },
         {
-            name: 'Jardin',
-            route: 'jardin',
-            icon: 'forest'
+            name: 'Usuarios',
+            route: 'usuarios',
+            icon: 'person_add'
         },
+
         {
             name: 'Perfil',
             route: 'perfil',
             icon: 'person'
         }
     ]
-
 }

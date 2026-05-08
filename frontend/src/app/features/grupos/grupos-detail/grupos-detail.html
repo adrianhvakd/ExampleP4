@@ -1,0 +1,220 @@
+@if (loading()) {
+  <div class="flex justify-center p-8">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+} @else if (grupo(); as g) {
+  <div class="p-6">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <button (click)="volver()" class="btn btn-ghost btn-sm">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+        <h1 class="text-2xl font-bold">{{ g.nombre }}</h1>
+        <span class="badge" [class.badge-success]="g.estado === 'activo'" [class.badge-warning]="g.estado === 'finalizado'" [class.badge-error]="g.estado === 'cancelado'">
+          {{ g.estado }}
+        </span>
+      </div>
+      <div class="flex gap-2">
+        <button (click)="editar()" class="btn btn-outline btn-sm">
+          <span class="material-symbols-outlined">edit</span>
+          Editar
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="stat bg-base-200 rounded-box p-4">
+        <div class="stat-title">Pozo por Ronda</div>
+        <div class="stat-value text-lg">Bs. {{ g.monto_cuota }}</div>
+        <div class="stat-desc">Recibe el beneficiario</div>
+      </div>
+      <div class="stat bg-base-200 rounded-box p-4">
+        <div class="stat-title">Aporte Individual</div>
+        <div class="stat-value text-lg">Bs. {{ getCuotaIndividual() | number:'1.0-0' }}</div>
+        <div class="stat-desc">Por persona por ronda</div>
+      </div>
+      <div class="stat bg-base-200 rounded-box p-4">
+        <div class="stat-title">Miembros Activos</div>
+        <div class="stat-value text-lg">{{ getMiembrosActivos() }}</div>
+        <div class="stat-desc">Participantes</div>
+      </div>
+    </div>
+
+    @if (g.descripcion) {
+      <div class="mb-4 p-3 bg-base-200 rounded-box">
+        <p class="text-sm">{{ g.descripcion }}</p>
+      </div>
+    }
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-xl font-bold">Miembros</h2>
+          <button (click)="abrirAddMember()" class="btn btn-outline btn-sm">
+            <span class="material-symbols-outlined">person_add</span>
+            Agregar
+          </button>
+        </div>
+
+        @if (showAddMember()) {
+          <div class="bg-base-200 rounded-box p-3 mb-3 flex gap-2 items-end">
+            <div class="flex-1">
+              <label class="label text-xs">Usuario</label>
+              <select [(ngModel)]="nuevoUserId" class="select w-full" name="nuevoUserId">
+                <option [value]="0" disabled>Seleccionar...</option>
+                @for (u of usuariosDisponibles(); track u.id) {
+                  <option [value]="u.id">{{ u.nombre }} (@{{ u.username }})</option>
+                }
+              </select>
+            </div>
+            <div class="w-20">
+              <label class="label text-xs">Orden</label>
+              <input [(ngModel)]="nuevoOrden" type="number" class="input w-full" name="nuevoOrden" />
+            </div>
+            <button (click)="addMember()" [disabled]="savingMember() || !nuevoUserId()" class="btn btn-primary btn-sm mb-1">
+              {{ savingMember() ? '...' : 'Añadir' }}
+            </button>
+          </div>
+        }
+
+        @if (g.miembros && g.miembros.length > 0) {
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Nombre</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (m of g.miembros; track m.id) {
+                  <tr>
+                    <td>{{ m.orden }}</td>
+                    <td>{{ m.user.nombre }} <span class="text-xs opacity-60">(@{{ m.user.username }})</span></td>
+                    <td>
+                      <span class="badge badge-sm" [class.badge-success]="m.estado === 'activo'" [class.badge-error]="m.estado === 'retirado'">
+                        {{ m.estado }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="alert alert-soft">No hay miembros. Agrega el primer miembro para generar las rondas.</div>
+        }
+      </div>
+
+      <div>
+        <h2 class="text-xl font-bold mb-3">Rondas</h2>
+        @if (g.rondas && g.rondas.length > 0) {
+          <div class="space-y-3">
+            @for (ronda of g.rondas; track ronda.id) {
+              <div class="collapse collapse-arrow bg-base-200">
+                <input type="checkbox" />
+                <div class="collapse-title font-medium flex items-center justify-between">
+                  <span>Ronda #{{ ronda.numero }} - {{ ronda.fecha_programada }}</span>
+                  <div class="flex items-center gap-2">
+                    <span class="badge" [class.badge-success]="ronda.estado === 'cobrada'" [class.badge-warning]="ronda.estado === 'pendiente'">
+                      {{ ronda.estado }}
+                    </span>
+                    @if (ronda.beneficiarioMember.user) {
+                      <span class="text-sm">→ {{ ronda.beneficiarioMember.user.nombre }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="collapse-content">
+                  <div class="text-sm mb-2">
+                    <strong>Pozo:</strong> Bs. {{ ronda.monto_total }} |
+                    <strong>Aporte c/u:</strong> Bs. {{ ronda.cuota_individual ?? 0 }} |
+                    <strong>Beneficiario:</strong> {{ ronda.beneficiarioMember.user.nombre }} |
+                    <strong>Pagados:</strong> {{ getPagadosCount(ronda.pagos) }}/{{ ronda.pagos.length }}
+                  </div>
+
+                  @if (ronda.estado === 'pendiente') {
+                    <button
+                      (click)="cobrarRonda(ronda)"
+                      [disabled]="toggling() === ronda.id"
+                      class="btn btn-success btn-xs mb-2"
+                    >
+                      {{ toggling() === ronda.id ? '...' : 'Marcar como Cobrada' }}
+                    </button>
+                  }
+
+                  <table class="table table-xs">
+                    <thead>
+                      <tr>
+                        <th>Miembro</th>
+                        <th>Pagó</th>
+                        <th>Fecha</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (pago of ronda.pagos; track pago.id) {
+                        <tr>
+                          <td>{{ pago.member.user.nombre }}</td>
+                          <td>
+                            @if (pago.pagado) {
+                              <span class="text-success material-symbols-outlined">check_circle</span>
+                            } @else {
+                              <span class="text-error material-symbols-outlined">cancel</span>
+                            }
+                          </td>
+                          <td>{{ pago.fecha_pago ?? '-' }}</td>
+                          <td>
+                            <button
+                              (click)="togglePago(pago.id!, pago.pagado!)"
+                              [disabled]="toggling() === pago.id"
+                              class="btn btn-xs"
+                              [class.btn-success]="!pago.pagado"
+                              [class.btn-error]="pago.pagado"
+                            >
+                              {{ toggling() === pago.id ? '...' : pago.pagado ? 'Anular' : 'Pagar' }}
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="alert alert-soft">Las rondas se generarán automáticamente al agregar el primer miembro.</div>
+        }
+      </div>
+    </div>
+
+    @if (deudoresDelGrupo().length > 0) {
+      <div class="mt-8">
+        <h2 class="text-xl font-bold mb-3">Historial de Deudores</h2>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>Ronda</th>
+                <th>Fecha</th>
+                <th>Miembro</th>
+                <th>Monto Adeudado</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of deudoresDelGrupo(); track d.pagoId) {
+                <tr>
+                  <td>#{{ d.rondaNumero }}</td>
+                  <td>{{ d.fecha }}</td>
+                  <td>{{ d.miembro }}</td>
+                  <td>Bs. {{ d.monto }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+}

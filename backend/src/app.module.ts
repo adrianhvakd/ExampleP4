@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { getConfigDB } from './config/configDatabase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
-import { JardinModule } from './jardin/jardin.module';
+import { GrupoModule } from './grupo/grupo.module';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { JardinModule } from './jardin/jardin.module';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
-    JardinModule,
+    GrupoModule,
   ],
   controllers: [AppController],
   providers: [AppService],

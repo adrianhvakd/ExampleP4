@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment.development';
+import type { User } from '../users/users.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,5 +30,9 @@ export class AuthService {
     if(this.isBrowser())
       return (this.getToken() !== null);
     return false;
+  }
+
+  getProfile() {
+    return this.http.get<User>(`${environment.apiUrl}/auth/profile`);
   }
 }

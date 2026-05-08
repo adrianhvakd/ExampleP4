@@ -1,0 +1,48 @@
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-6">Deudores</h1>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else if (deudores().length === 0) {
+    <div class="alert alert-success">
+      <span class="material-symbols-outlined">check_circle</span>
+      No hay deudores. ¡Todos los pagos están al día!
+    </div>
+  } @else {
+    @for (item of deudores(); track item.grupo.id) {
+      <div class="bg-base-200 rounded-box p-4 mb-4">
+        <div class="flex items-center justify-between mb-3">
+          <a [routerLink]="['/grupos', item.grupo.id]" class="text-lg font-bold hover:underline">
+            {{ item.grupo.nombre }}
+          </a>
+          <span class="badge badge-error">{{ item.deudores.length }} deudor(es)</span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>Ronda</th>
+                <th>Fecha</th>
+                <th>Miembro</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (d of item.deudores; track d.id) {
+                <tr>
+                  <td>#{{ d.rondaNumero }}</td>
+                  <td>{{ d.fechaProgramada }}</td>
+                  <td>{{ d.miembro }}</td>
+                  <td>Bs. {{ d.monto }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</div>

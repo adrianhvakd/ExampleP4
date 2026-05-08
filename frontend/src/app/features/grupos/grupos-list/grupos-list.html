@@ -1,0 +1,76 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">Mis Grupos</h1>
+    <a routerLink="/grupos/nuevo" class="btn btn-primary">
+      <span class="material-symbols-outlined">add</span>
+      Nuevo Grupo
+    </a>
+  </div>
+
+  <div class="join mb-4">
+    <input
+      [(ngModel)]="search"
+      (keyup.enter)="onSearch()"
+      type="text"
+      placeholder="Buscar por nombre..."
+      class="input input-bordered join-item"
+    />
+    <button (click)="onSearch()" class="btn btn-neutral join-item">
+      <span class="material-symbols-outlined">search</span>
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else if (grupos().length === 0) {
+    <div class="alert alert-info">No hay grupos registrados. ¡Crea tu primer grupo!</div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="table table-zebra">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Cuota Semanal</th>
+            <th>Miembros</th>
+            <th>Estado</th>
+            <th>Inicio</th>
+            <th>Creado por</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (grupo of grupos(); track grupo.id) {
+            <tr class="hover cursor-pointer" (click)="verGrupo(grupo.id!)">
+              <td class="font-semibold">{{ grupo.nombre }}</td>
+              <td>Bs. {{ grupo.monto_cuota }}</td>
+              <td>{{ grupo.miembros.length }}</td>
+              <td>
+                <span class="badge" [class.badge-success]="grupo.estado === 'activo'" [class.badge-warning]="grupo.estado === 'finalizado'" [class.badge-error]="grupo.estado === 'cancelado'">
+                  {{ grupo.estado }}
+                </span>
+              </td>
+              <td>{{ grupo.fecha_inicio | date:'dd/MM/yyyy' }}</td>
+              <td>{{ grupo.createdBy.nombre }}</td>
+              <td>
+                <button (click)="verGrupo(grupo.id!); $event.stopPropagation()" class="btn btn-ghost btn-sm">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-between items-center mt-4">
+      <span>Total: {{ total() }} grupos</span>
+      <div class="join">
+        <button (click)="prevPage()" [disabled]="page() === 1" class="join-item btn btn-sm">Anterior</button>
+        <span class="join-item btn btn-sm btn-disabled">Pág. {{ page() }} de {{ lastPage() }}</span>
+        <button (click)="nextPage()" [disabled]="page() === lastPage()" class="join-item btn btn-sm">Siguiente</button>
+      </div>
+    </div>
+  }
+</div>
