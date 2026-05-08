@@ -1,6 +1,6 @@
 import { Controller, Param, Patch } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PagoEntity } from './entities/pago.entity';
+import { PagoEntity } from '../grupo/entities/pago.entity';
 import { Repository } from 'typeorm';
 
 @Controller('pagos')

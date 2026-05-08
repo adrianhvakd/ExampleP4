@@ -8,6 +8,8 @@ import { getConfigDB } from './config/configDatabase';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { GrupoModule } from './grupo/grupo.module';
+import { PagoModule } from './pago/pago.module';
+import { RondaModule } from './ronda/ronda.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { GrupoModule } from './grupo/grupo.module';
       signOptions: { expiresIn: '1h' },
     }),
     GrupoModule,
+    PagoModule,
+    RondaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { GrupoService } from './grupo.service';
 import { GrupoController } from './grupo.controller';
-import { RondaController } from './ronda.controller';
-import { PagoController } from './pago.controller';
 import { GrupoEntity } from './entities/grupo.entity';
 import { GroupMemberEntity } from './entities/group-member.entity';
 import { RondaEntity } from './entities/ronda.entity';
@@ -13,7 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   imports: [
     TypeOrmModule.forFeature([GrupoEntity, GroupMemberEntity, RondaEntity, PagoEntity]),
   ],
-  controllers: [GrupoController, RondaController, PagoController],
+  controllers: [GrupoController],
   providers: [GrupoService],
   exports: [GrupoService],
 })

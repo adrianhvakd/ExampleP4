@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Patch } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RondaEntity, EstadoRonda } from './entities/ronda.entity';
-import { PagoEntity } from './entities/pago.entity';
+import { RondaEntity } from '../grupo/entities/ronda.entity';
+import { EstadoRonda } from '../grupo/entities/ronda.entity';
+import { PagoEntity } from '../grupo/entities/pago.entity';
 import { Repository } from 'typeorm';
 
 @Controller('rondas')

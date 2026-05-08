@@ -18,12 +18,6 @@ export class LayoutComponent {
             name: 'Usuarios',
             route: 'usuarios',
             icon: 'person_add'
-        },
-
-        {
-            name: 'Perfil',
-            route: 'perfil',
-            icon: 'person'
         }
     ]
 }
